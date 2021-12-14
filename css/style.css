@@ -17,7 +17,7 @@ h1 {
   font-size: 4em;
   color: #ABB3C4;
   text-shadow: 2px 2px 2px #1E2229;
-  text-align: justify;
+  text-align: center;
   padding: 20px;
 
 }
@@ -25,7 +25,7 @@ h1 {
 
 
 section {
-  display: flex block;
+  display: block;
   width: 80%;
   padding: 8px;
   border: #1E2229;
@@ -52,3 +52,4 @@ img {
   margin-bottom: 8px;
   
 }
+
