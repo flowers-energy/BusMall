@@ -4,9 +4,9 @@
 
 const allProductsArray = [];
 
-// global counter - CHANGE TO 25 BEFORE SUBMISSION!!!
+// global counter 
 // array of products - all product array
-let ATTEMPTS = 5;
+let ATTEMPTS = 25;
 let clicks = 0;
 // window into DOM - declare variables
 let myContainer = document.getElementById('container');
@@ -14,8 +14,8 @@ let imageOne = document.getElementById('image-one');
 let imageTwo = document.getElementById('image-two');
 let imageThree = document.getElementById('image-three');
 let surveyResults = document.getElementById('survey-results');
-let showResults = document.getElementById('show-results');
-let button = document.getElementById('results');
+
+
 // contructor - for products represented as images to be inserted into page
 function Product(name, fileExtension = 'jpg') {
   //name
@@ -57,36 +57,19 @@ function getRandomIndex() {
   return Math.floor(Math.random() * allProductsArray.length);
 }
 
-// console.log(productOneIndex, productTwoIndex, productThreeIndex);
-// validation - create unique ID for each product - use loop - parse array to see if included. use array method ''
-// define attributes for image - src, alt
-//
-// console.log('rand nums', indexProd);
-// while (productOneIndex === productTwoIndex) {
-//   productOneIndex = getRandomIndex();
-// }
-
-// while (productThreeIndex === productTwoIndex) {
-//   productTwoIndex = getRandomIndex();
-// }
-
-// while (productThreeIndex === productOneIndex) {
-//   productThreeIndex = getRandomIndex();
-// }
-
+let indexProd = [];
 function renderImage() {
-  let indexProd = [];
 
-  while (indexProd.length < 3) {
+  while (indexProd.length < 6) {
     let randNum = getRandomIndex();
     while (!indexProd.includes(randNum)) {
       indexProd.push(randNum);
     }
   }
 
-  let productOneIndex = indexProd.pop();
-  let productTwoIndex = indexProd.pop();
-  let productThreeIndex = indexProd.pop();
+  let productOneIndex = indexProd.shift();
+  let productTwoIndex = indexProd.shift();
+  let productThreeIndex = indexProd.shift();
 
   imageOne.src = allProductsArray[productOneIndex].src;
   imageOne.alt = allProductsArray[productOneIndex].name;
@@ -99,8 +82,44 @@ function renderImage() {
   imageThree.src = allProductsArray[productThreeIndex].src;
   imageThree.alt = allProductsArray[productThreeIndex].name;
   allProductsArray[productThreeIndex].views++;
-  //console.log(allProductsArray[productThreeIndex]);
+  console.log(allProductsArray);
 
+}
+
+function renderChart() {
+  const ctx = document.getElementById('chart').getContext('2d');
+
+  let prodNames = [];
+  let prodVotes = [];
+
+  for (let i = 0; i < allProductsArray.length; i++) {
+    prodVotes.push(allProductsArray[i].clicks);
+    prodNames.push(allProductsArray[i].name);
+  }
+  console.log(prodNames);
+  console.log(prodVotes);
+  let chartData = {
+    type: 'bar',
+    data: {
+      labels: prodVotes,
+      datasets: [{
+        label: '# of Votes',
+        data: prodVotes,
+        backgroundColor: 'rgba(255, 99, 132, 0.7)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  };
+  
+  const myChart = new Chart(ctx, chartData);
 }
 
 // event handler
@@ -108,7 +127,7 @@ function handleImageClicks(e) {
   clicks++;
   let imageClicks = e.target.alt;
   console.log(imageClicks);
-
+  
   for (let i = 0; i < allProductsArray.length; i++) {
     if (imageClicks === allProductsArray[i].name) {
       allProductsArray[i].clicks++;
@@ -118,7 +137,7 @@ function handleImageClicks(e) {
   if (clicks === ATTEMPTS) {
     myContainer.removeEventListener('click', handleImageClicks);
   }
-
+  
 }
 
 function handleShowResults(e) { //eslint-disable-line 
@@ -132,6 +151,7 @@ function handleShowResults(e) { //eslint-disable-line
   }
   if (clicks === ATTEMPTS) {
     myContainer.removeEventListener('click', handleShowResults);
+    renderChart();
   }
 }
 
@@ -141,14 +161,3 @@ myContainer.addEventListener('click', handleImageClicks);
 
 // triggered at click the image event
 // event listener
-
-
-//button.addEventListener('click', handleShowResults);
-
-
-
-// array for labels - image name [] votes [] views []
-
-// variable for chart data
-// const function below
-//
