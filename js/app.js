@@ -2,12 +2,15 @@
 
 // global variables
 
-const allProductsArray = [];
+let allProductsArray = [];
 
-// global counter 
+// global counter
 // array of products - all product array
 let ATTEMPTS = 25;
 let clicks = 0;
+let prodNames = [];
+let prodVotes = [];
+let views = [];
 // window into DOM - declare variables
 let myContainer = document.getElementById('container');
 let imageOne = document.getElementById('image-one');
@@ -30,33 +33,39 @@ function Product(name, fileExtension = 'jpg') {
   // push into array
   allProductsArray.push(this);
 }
+// pull data - if data in local storage, get it -
+let retrieveProducts = localStorage.getItem('products');
+if (retrieveProducts) {
+  let parsedProducts = JSON.parse(retrieveProducts);
+  allProductsArray = parsedProducts;
+} else {
+  new Product('bag', 'jpg');
+  new Product('banana', 'jpg');
+  new Product('bathroom', 'jpg');
+  new Product('boots', 'jpg');
+  new Product('breakfast', 'jpg');
+  new Product('bubblegum', 'jpg');
+  new Product('chair', 'jpg');
+  new Product('cthulhu', 'jpg');
+  new Product('dog-duck', 'jpg');
+  new Product('dragon', 'jpg');
+  new Product('pen', 'jpg');
+  new Product('pet-sweep', 'jpg');
+  new Product('scissors', 'jpg');
+  new Product('shark', 'jpg');
+  new Product('tauntaun', 'jpg');
+  new Product('unicorn', 'jpg');
+  new Product('water-can', 'jpg');
+  new Product('wine-glass', 'jpg');
+  new Product('sweep', 'png');
+}
 
-
-// executables establishing new instances of objects
-new Product('bag', 'jpg');
-new Product('banana', 'jpg');
-new Product('bathroom', 'jpg');
-new Product('boots', 'jpg');
-new Product('breakfast', 'jpg');
-new Product('bubblegum', 'jpg');
-new Product('chair', 'jpg');
-new Product('cthulhu', 'jpg');
-new Product('dog-duck', 'jpg');
-new Product('dragon', 'jpg');
-new Product('pen', 'jpg');
-new Product('pet-sweep', 'jpg');
-new Product('scissors', 'jpg');
-new Product('shark', 'jpg');
-new Product('tauntaun', 'jpg');
-new Product('unicorn', 'jpg');
-new Product('water-can', 'jpg');
-new Product('wine-glass', 'jpg');
-new Product('sweep', 'png');
 // functions: randon number generator - three different products
 function getRandomIndex() {
   return Math.floor(Math.random() * allProductsArray.length);
 }
 
+// make array global variable so each loop render stores and shifts results properly
 let indexProd = [];
 function renderImage() {
 
@@ -89,24 +98,31 @@ function renderImage() {
 function renderChart() {
   const ctx = document.getElementById('chart').getContext('2d');
 
-  let prodNames = [];
-  let prodVotes = [];
+
 
   for (let i = 0; i < allProductsArray.length; i++) {
     prodVotes.push(allProductsArray[i].clicks);
     prodNames.push(allProductsArray[i].name);
+    views.push(allProductsArray[i].views);
   }
   console.log(prodNames);
   console.log(prodVotes);
   let chartData = {
     type: 'bar',
     data: {
-      labels: prodVotes,
+      labels: prodNames,
       datasets: [{
         label: '# of Votes',
         data: prodVotes,
         backgroundColor: 'rgba(255, 99, 132, 0.7)',
         borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1
+      },
+      {
+        label: '# of Views',
+        data: views,
+        backgroundColor: 'rgba(211, 99, 132, 0.7)',
+        borderColor: 'rgba(211, 0, 0, 1)',
         borderWidth: 1
       }]
     },
@@ -118,8 +134,8 @@ function renderChart() {
       }
     }
   };
-  
-  const myChart = new Chart(ctx, chartData);
+
+  const myChart = new Chart(ctx, chartData); //eslint-disable-line
 }
 
 // event handler
@@ -127,7 +143,7 @@ function handleImageClicks(e) {
   clicks++;
   let imageClicks = e.target.alt;
   console.log(imageClicks);
-  
+
   for (let i = 0; i < allProductsArray.length; i++) {
     if (imageClicks === allProductsArray[i].name) {
       allProductsArray[i].clicks++;
@@ -137,7 +153,7 @@ function handleImageClicks(e) {
   if (clicks === ATTEMPTS) {
     myContainer.removeEventListener('click', handleImageClicks);
   }
-  
+
 }
 
 function handleShowResults(e) { //eslint-disable-line 
@@ -152,6 +168,15 @@ function handleShowResults(e) { //eslint-disable-line
   if (clicks === ATTEMPTS) {
     myContainer.removeEventListener('click', handleShowResults);
     renderChart();
+
+    //   Storage process —
+
+    // Stringify data -
+    let stringifiedProducts = JSON.stringify(allProductsArray);//  -> grab json validator
+    // console.log(stringifiedProducts);
+    // Save data -
+    localStorage.setItem('products', stringifiedProducts);
+
   }
 }
 
